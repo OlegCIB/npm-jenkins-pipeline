@@ -1,0 +1,49 @@
+// Example 3: React/Frontend Project with Custom Parameters
+
+@Library('your-shared-library') _
+
+standardNPMPipeline([
+    // Override some defaults
+    buildCommand: 'npm run build:production',
+    testCommand: 'npm run test:coverage',
+    
+    // Add React-specific parameters
+    additionalParameters: [
+        choice(
+            name: 'REACT_ENV',
+            choices: ['development', 'staging', 'production'],
+            description: 'React environment configuration'
+        ),
+        string(
+            name: 'PUBLIC_URL',
+            defaultValue: '/',
+            description: 'Public URL for React app'
+        ),
+        booleanParam(
+            name: 'ENABLE_BUNDLE_ANALYSIS',
+            defaultValue: false,
+            description: 'Generate bundle analysis report'
+        ),
+        choice(
+            name: 'CDN_PROVIDER',
+            choices: ['none', 'cloudfront', 'cloudflare'],
+            description: 'CDN provider for static assets'
+        )
+    ],
+    
+    customStages: [
+        preDeploy: {
+            if (params.ENABLE_BUNDLE_ANALYSIS) {
+                echo 'Generating bundle analysis...'
+                sh 'npm run analyze'
+                archiveArtifacts artifacts: 'bundle-analysis.html', allowEmptyArchive: true
+            }
+        },
+        postDeploy: {
+            if (params.CDN_PROVIDER != 'none') {
+                echo "Invalidating ${params.CDN_PROVIDER} cache..."
+                sh "npm run cdn:invalidate -- --provider=${params.CDN_PROVIDER}"
+            }
+        }
+    ]
+])
