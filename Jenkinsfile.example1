@@ -1,0 +1,5 @@
+// Example 1: Basic Usage (Uses all default parameters)
+
+@Library('your-shared-library') _
+
+standardNPMPipeline()
