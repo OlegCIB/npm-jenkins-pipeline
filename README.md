@@ -24,38 +24,38 @@ It provides a robust CI/CD workflow, configurable via UI parameters or overrides
 
 ## Usage Examples
 
-### 1. [Jenkinsfile.example1](../Jenkinsfile.example1)
+### 1. [Jenkinsfile.example1](./Jenkinsfile.example1)
 Basic usage with all default parameters.
 
-**Link:** [Jenkinsfile.example1](../Jenkinsfile.example1)
+**Link:** [Jenkinsfile.example1](./Jenkinsfile.example1)
 
 ---
 
-### 2. [Jenkinsfile.example2](../Jenkinsfile.example2)
+### 2. [Jenkinsfile.example2](./Jenkinsfile.example2)
 Override configuration and add custom UI parameters and stages.
 
-**Link:** [Jenkinsfile.example2](../Jenkinsfile.example2)
+**Link:** [Jenkinsfile.example2](./Jenkinsfile.example2)
 
 ---
 
-### 3. [Jenkinsfile.example3](../Jenkinsfile.example3)
+### 3. [Jenkinsfile.example3](./Jenkinsfile.example3)
 React/Frontend project with extra parameters and pre/post deploy custom logic.
 
-**Link:** [Jenkinsfile.example3](../Jenkinsfile.example3)
+**Link:** [Jenkinsfile.example3](./Jenkinsfile.example3)
 
 ---
 
-### 4. [Jenkinsfile.example4](../Jenkinsfile.example4)
+### 4. [Jenkinsfile.example4](./Jenkinsfile.example4)
 Disable deploy stages for a library/package project; add library-specific parameters.
 
-**Link:** [Jenkinsfile.example4](../Jenkinsfile.example4)
+**Link:** [Jenkinsfile.example4](./Jenkinsfile.example4)
 
 ---
 
-### 5. [Jenkinsfile.example5](../Jenkinsfile.example5)
+### 5. [Jenkinsfile.example5](./Jenkinsfile.example5)
 Microservice with custom database migration and health-check parameters.
 
-**Link:** [Jenkinsfile.example5](../Jenkinsfile.example5)
+**Link:** [Jenkinsfile.example5](./Jenkinsfile.example5)
 
 ---
 
@@ -75,10 +75,10 @@ They cover Node.js version, build/test/lint commands, deployment toggles, artifa
 
 ## File Location
 
-- Shared pipeline: [`vars/standardNPMPipeline.groovy`](./standardNPMPipeline.groovy)
+- Shared pipeline: [`vars/standardNPMPipeline.groovy`](./vars/standardNPMPipeline.groovy)
 
 ---
 
 ## License
 
-See [LICENSE](../LICENSE) for details.
+See [LICENSE](./LICENSE) for details.
