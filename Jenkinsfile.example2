@@ -1,0 +1,45 @@
+// Example 2: Override Configuration with Additional Parameters
+
+@Library('your-shared-library') _
+
+standardNPMPipeline([
+    // Override defaults programmatically
+    enableQualityGate: true,
+    enableNPMPublish: true,
+    
+    // Add custom parameters specific to this project
+    additionalParameters: [
+        choice(
+            name: 'DEPLOYMENT_ENVIRONMENT',
+            choices: ['dev', 'staging', 'prod'],
+            description: 'Target deployment environment'
+        ),
+        string(
+            name: 'CUSTOM_BUILD_ARGS',
+            defaultValue: '--optimize',
+            description: 'Additional build arguments'
+        ),
+        booleanParam(
+            name: 'ENABLE_SMOKE_TESTS',
+            defaultValue: false,
+            description: 'Run smoke tests after deployment'
+        )
+    ],
+    
+    // Custom stages using the additional parameters
+    customStages: [
+        preDeploy: {
+            echo "Deploying to: ${params.DEPLOYMENT_ENVIRONMENT}"
+            if (params.ENABLE_SMOKE_TESTS) {
+                echo 'Preparing smoke tests...'
+                sh 'npm run test:smoke:prepare'
+            }
+        },
+        postDeploy: {
+            if (params.ENABLE_SMOKE_TESTS) {
+                echo 'Running smoke tests...'
+                sh "npm run test:smoke -- --env=${params.DEPLOYMENT_ENVIRONMENT}"
+            }
+        }
+    ]
+])
