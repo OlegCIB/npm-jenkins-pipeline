@@ -1,0 +1,52 @@
+// Example 5: Microservice with Database Migrations
+
+@Library('your-shared-library') _
+
+standardNPMPipeline([
+    additionalParameters: [
+        credentials(
+            name: 'DATABASE_URL',
+            credentialType: 'org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl',
+            defaultValue: 'database-url',
+            description: 'Database connection URL'
+        ),
+        booleanParam(
+            name: 'RUN_MIGRATIONS',
+            defaultValue: true,
+            description: 'Run database migrations before deployment'
+        ),
+        booleanParam(
+            name: 'SEED_DATABASE',
+            defaultValue: false,
+            description: 'Seed database with test data'
+        ),
+        string(
+            name: 'HEALTH_CHECK_URL',
+            defaultValue: 'http://localhost:3000/health',
+            description: 'Health check endpoint URL'
+        )
+    ],
+    
+    customStages: [
+        preDeploy: {
+            if (params.RUN_MIGRATIONS) {
+                echo 'Running database migrations...'
+                withCredentials([string(credentialsId: params.DATABASE_URL, variable: 'DB_URL')]) {
+                    sh 'npm run migrate'
+                }
+            }
+            
+            if (params.SEED_DATABASE) {
+                echo 'Seeding database...'
+                sh 'npm run seed'
+            }
+        },
+        postDeploy: {
+            echo 'Running health check...'
+            sh "curl -f ${params.HEALTH_CHECK_URL} || exit 1"
+            
+            echo 'Running integration tests...'
+            sh 'npm run test:integration'
+        }
+    ]
+])
