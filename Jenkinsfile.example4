@@ -1,0 +1,59 @@
+// Example 4: Library/Package Project
+
+@Library('your-shared-library') _
+
+standardNPMPipeline([
+    // Disable deployment stages for library
+    enableStaging: false,
+    enableProduction: false,
+    enableNPMPublish: true,
+    
+    // Add library-specific parameters
+    additionalParameters: [
+        choice(
+            name: 'PUBLISH_TYPE',
+            choices: ['patch', 'minor', 'major', 'prerelease'],
+            description: 'Type of version bump for publishing'
+        ),
+        string(
+            name: 'PRERELEASE_ID',
+            defaultValue: 'beta',
+            description: 'Prerelease identifier (alpha, beta, rc)'
+        ),
+        booleanParam(
+            name: 'GENERATE_DOCS',
+            defaultValue: true,
+            description: 'Generate API documentation'
+        ),
+        booleanParam(
+            name: 'PUBLISH_TO_GITHUB',
+            defaultValue: true,
+            description: 'Publish release to GitHub'
+        )
+    ],
+    
+    customStages: [
+        preDeploy: {
+            if (params.GENERATE_DOCS) {
+                echo 'Generating API documentation...'
+                sh 'npm run docs:generate'
+                archiveArtifacts artifacts: 'docs/**/*', allowEmptyArchive: true
+            }
+            
+            if (params.PUBLISH_TYPE != 'patch') {
+                echo "Bumping version: ${params.PUBLISH_TYPE}"
+                if (params.PUBLISH_TYPE == 'prerelease') {
+                    sh "npm version prerelease --preid=${params.PRERELEASE_ID}"
+                } else {
+                    sh "npm version ${params.PUBLISH_TYPE}"
+                }
+            }
+        },
+        postDeploy: {
+            if (params.PUBLISH_TO_GITHUB) {
+                echo 'Creating GitHub release...'
+                sh 'npm run release:github'
+            }
+        }
+    ]
+])
